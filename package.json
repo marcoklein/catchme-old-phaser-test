@@ -1,0 +1,23 @@
+{
+  "name": "firstgame",
+  "version": "1.0.0",
+  "description": " Very basic multiplayer online game example made with Phaser, Node.js and Socket.io ",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [
+    "Phaser",
+    "Multiplayer",
+    "game",
+    "Node.js",
+    "socket.io"
+  ],
+  "author": "Marco Klein",
+  "dependencies": {
+    "express": "^4.15.2",
+    "socket.io": "^1.7.3",
+    "victor": "^1.1.0"
+  }
+}
