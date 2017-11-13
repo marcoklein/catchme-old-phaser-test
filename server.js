@@ -72,21 +72,15 @@ io.on('connection',function(socket){
 				// inform other players about new player
         socket.broadcast.emit('newplayer', socket.player);
 
-				// respond to a "click" event
-        //socket.on('click',function(data){
-        //    console.log('click to '+data.x+', '+data.y);
-				//socket.player.x = data.x;
-        //    socket.player.y = data.y;
-        //    io.emit('move',socket.player);
-        //});
 
 				// client wants to move player into a certain direction
 				socket.on('dir', function (vector) {
 					// set and normalize direction vector
 					socket.player.direction.x = vector.x;
 					socket.player.direction.y = vector.y;
-					socket.player.direction.normalize();
-					console.log('new direction: x=' + vector.x + ', y=' + vector.y);
+					if (vector.x != 0 || vector.y != 0) {
+						socket.player.direction.normalize();
+					}
 				});
 
         socket.on('disconnect',function(){

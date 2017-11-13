@@ -45,7 +45,7 @@ Game.update = function () {
 	  dirX = 1;
 	}
 
-	if (dirX != 0 || dirY != 0) Client.sendDirection(dirX, dirY);
+	Client.sendDirection(dirX, dirY);
 }
 
 
