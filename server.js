@@ -4,6 +4,9 @@ var server = require('http').Server(app);
 var io = require('socket.io').listen(server);
 var Victor = require('victor');
 
+const WORLD_WIDTH = 30 * 32;
+const WORLD_HEIGHT = 30 * 32;
+
 app.use('/css',express.static(__dirname + '/css'));
 app.use('/js',express.static(__dirname + '/js'));
 app.use('/assets',express.static(__dirname + '/assets'));
@@ -35,6 +38,18 @@ function gameUpdate(delta) {
 				y: player.y + player.direction.y * player.speed,
 				t: delta
 			}
+			// check if new position would be out of world bounds
+			if (newPosition.x < player.size / 2) {
+				newPosition.x = player.size / 2;
+			} else if (newPosition.x > WORLD_WIDTH - player.size / 2) {
+				newPosition.x = WORLD_WIDTH - player.size / 2;
+			}
+			if (newPosition.y < player.size / 2) {
+				newPosition.y = player.size / 2;
+			} else if (newPosition.y > WORLD_HEIGHT - player.size / 2) {
+				newPosition.y = WORLD_HEIGHT - player.size / 2;
+			}
+
 			player.x = newPosition.x;
 			player.y = newPosition.y;
 			newPositions.push(newPosition);
@@ -64,6 +79,7 @@ io.on('connection',function(socket){
             id: server.lastPlayderID++,
 						direction: new Victor(0, 0),
 						speed: 10,
+						size: 32,
             x: randomInt(100,400),
             y: randomInt(100,400)
         };

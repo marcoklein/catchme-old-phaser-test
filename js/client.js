@@ -19,7 +19,7 @@ Client.sendClick = function(x,y){
 };
 
 Client.socket.on('newplayer',function(data){
-    Game.addNewPlayer(data.id,data.x,data.y);
+    Game.addNewPlayer(data.id, data.x, data.y, data.size);
 });
 
 Client.socket.on('allplayers',function(data){

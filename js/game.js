@@ -48,15 +48,12 @@ Game.update = function () {
 	Client.sendDirection(dirX, dirY);
 }
 
-
-Game.getCoordinates = function(layer,pointer){
-    Client.sendClick(pointer.worldX,pointer.worldY);
-};
-
-Game.addNewPlayer = function(id,x,y){
-    Game.playerMap[id] = game.add.sprite(x,y,'sprite');
-		Game.camera.follow(Game.playerMap[id]);
-		Game.camera.flash();
+Game.addNewPlayer = function(id, x, y, size) {
+  Game.playerMap[id] = game.add.sprite(x, y, 'sprite');
+	Game.playerMap[id].anchor.x = 0.5;
+	Game.playerMap[id].anchor.y = 0.5;
+  Game.camera.follow(Game.playerMap[id]);
+  Game.camera.flash();
 };
 
 /*Game.movePlayer = function(id,x,y){
@@ -70,14 +67,12 @@ Game.addNewPlayer = function(id,x,y){
 
 // move players to given target positions
 Game.movePlayers = function (positions) {
-	console.log('positions: ' + JSON.stringify(positions));
 	positions.forEach(function (position) {
 		var player = Game.playerMap[position.id];
 		var tween = game.add.tween(player);
 		var duration = position.t;
 		tween.to({x: position.x, y: position.y}, duration);
 		tween.start();
-		console.log('moved player to: x=' + position.x + ', y=' + position.y);
 	});
 }
 
