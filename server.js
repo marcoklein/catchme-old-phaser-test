@@ -24,6 +24,10 @@ var lastTime;
 var gameTimeout = null;
 var gameUpdateInterval = 40;
 
+function playerCollision(playerA, playerB) {
+	console.log("collided");
+}
+
 function gameUpdate(delta) {
 	// update player positions
 	var players = getAllPlayers();
@@ -55,6 +59,23 @@ function gameUpdate(delta) {
 			newPositions.push(newPosition);
 		}
 	});
+	// detect player collision
+	var pos1 = new Victor(); // help vectors
+	var pos2 = new Victor();
+	for (var i = 0; i < players.length; i++) {
+		pos1.x = players[i].x;
+		pos1.y = players[i].y;
+		for (var j = i + 1; j < players.length; j++) {
+			pos2.x = players[j].x;
+			pos2.y = players[j].y;
+			// test if two players collide
+			if (pos2.subtract(pos1).length() - players[i].size / 2 - players[j].size / 2 < 0) {
+				playerCollision(players[i], players[j]);
+			}
+		}
+	}
+
+
 	// emit new positions
 	if (newPositions.length > 0) io.emit('pos', newPositions);
 
