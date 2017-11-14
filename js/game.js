@@ -50,10 +50,13 @@ Game.update = function () {
 
 Game.addNewPlayer = function(id, x, y, size) {
   Game.playerMap[id] = game.add.sprite(x, y, 'sprite');
-	Game.playerMap[id].anchor.x = 0.5;
-	Game.playerMap[id].anchor.y = 0.5;
-  Game.camera.follow(Game.playerMap[id]);
-  Game.camera.flash();
+  Game.playerMap[id].anchor.x = 0.5;
+  Game.playerMap[id].anchor.y = 0.5;
+	console.log("Added new player with id: " + id);
+  if (id == Game.playerId) {
+    Game.camera.follow(Game.playerMap[id]);
+    Game.camera.flash();
+  }
 };
 
 /*Game.movePlayer = function(id,x,y){

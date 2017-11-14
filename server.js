@@ -15,7 +15,7 @@ app.get('/',function(req,res){
     res.sendFile(__dirname+'/index.html');
 });
 
-server.lastPlayderID = 0;
+server.lastPlayerID = 0;
 
 
 
@@ -76,7 +76,7 @@ io.on('connection',function(socket){
 
     socket.on('newplayer',function(){
         socket.player = {
-            id: server.lastPlayderID++,
+            id: server.lastPlayerID++,
 						direction: new Victor(0, 0),
 						speed: 10,
 						size: 32,
@@ -84,6 +84,7 @@ io.on('connection',function(socket){
             y: randomInt(100,400)
         };
 				// send other players
+				socket.emit('assign_player_id', socket.player.id);
         socket.emit('allplayers', getAllPlayers());
 				// inform other players about new player
         socket.broadcast.emit('newplayer', socket.player);

@@ -7,7 +7,7 @@ Client.socket = io.connect();
 
 
 Client.askNewPlayer = function(){
-    Client.socket.emit('newplayer');
+	Client.socket.emit('newplayer');
 };
 
 Client.sendDirection = function (x, y) {
@@ -17,6 +17,11 @@ Client.sendDirection = function (x, y) {
 Client.sendClick = function(x,y){
   Client.socket.emit('click',{x:x,y:y});
 };
+
+Client.socket.on('assign_player_id', function (id) {
+	console.log("Assigned player id: " + id);
+	Game.playerId = id;
+});
 
 Client.socket.on('newplayer',function(data){
     Game.addNewPlayer(data.id, data.x, data.y, data.size);
