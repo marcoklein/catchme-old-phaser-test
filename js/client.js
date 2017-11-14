@@ -24,13 +24,17 @@ Client.socket.on('assign_player_id', function (id) {
 });
 
 Client.socket.on('newplayer',function(data){
-    Game.addNewPlayer(data.id, data.x, data.y, data.size);
+    Game.addNewPlayer(data.id, data.x, data.y, data.size, data.isCatcher);
 });
 
 Client.socket.on('allplayers',function(data){
     for(var i = 0; i < data.length; i++){
-        Game.addNewPlayer(data[i].id,data[i].x,data[i].y);
+			Game.addNewPlayer(data[i].id,data[i].x,data[i].y);
     }
+
+		Client.socket.on('change_catcher', function (newCatcher) {
+			Game.changeCatcher(newCatcher);
+		});
 
     Client.socket.on('move',function(data){
         Game.movePlayer(data.id,data.x,data.y);

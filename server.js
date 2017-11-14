@@ -23,12 +23,32 @@ server.lastPlayerID = 0;
 var lastTime;
 var gameTimeout = null;
 var gameUpdateInterval = 40;
+var curCatcher = null;
+var CATCH_TIMEOUT = 3000;
+var curCatchTimeout = CATCH_TIMEOUT;
+
+// changes the current catcher to the given catcher (may be null)
+function changeCatcher(newCatcher, oldCatcher) {
+	newCatcher.isCatcher = true;
+	oldCatcher.isCatcher = false;
+	io.emit('change_catcher', newCatcher);
+	curCatchTimeout = CATCH_TIMEOUT;
+	console.log('changed catcher. player with id ' + newCatcher.id + ' is the new catcher.');
+}
 
 function playerCollision(playerA, playerB) {
-	console.log("collided");
+	if (curCatchTimeout < 0) {
+		// change isCatcher
+		if (playerA.isCatcher && !playerB.isCatcher) {
+			changeCatcher(playerB, playerA);
+		} else if (!playerA.isCatcher && playerB.isCatcher) {
+			changeCatcher(playerA, playerB);
+		}
+	}
 }
 
 function gameUpdate(delta) {
+	curCatchTimeout -= delta;
 	// update player positions
 	var players = getAllPlayers();
 	var newPositions = [];
@@ -93,17 +113,24 @@ function startGame() {
 
 
 // handle connecting players
-io.on('connection',function(socket){
+io.on('connection', function (socket){
 
-    socket.on('newplayer',function(){
+    socket.on('newplayer', function (){
         socket.player = {
             id: server.lastPlayerID++,
 						direction: new Victor(0, 0),
 						speed: 10,
 						size: 32,
+						isCatcher: false,
             x: randomInt(100,400),
             y: randomInt(100,400)
         };
+
+				// make the first player a catcher
+				// TODO check if there is another catcher
+				if (getAllPlayers().length == 1) {
+					socket.player.isCatcher = true;
+				}
 				// send other players
 				socket.emit('assign_player_id', socket.player.id);
         socket.emit('allplayers', getAllPlayers());

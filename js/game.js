@@ -14,7 +14,8 @@ Game.init = function(){
 Game.preload = function() {
     game.load.tilemap('map', 'assets/map/default-map.json', null, Phaser.Tilemap.TILED_JSON);
     game.load.spritesheet('tileset', 'assets/map/tilesheet_top_down.png', 32, 32);
-    game.load.image('sprite', 'assets/sprites/simple_character.png');
+    game.load.image('player', 'assets/sprites/simple_character.png');
+    game.load.image('catcher', 'assets/sprites/simple_catcher.png');
 };
 
 Game.create = function(){
@@ -48,8 +49,12 @@ Game.update = function () {
 	Client.sendDirection(dirX, dirY);
 }
 
-Game.addNewPlayer = function(id, x, y, size) {
-  Game.playerMap[id] = game.add.sprite(x, y, 'sprite');
+Game.addNewPlayer = function(id, x, y, size, isCatcher) {
+	if (!isCatcher) {
+		Game.playerMap[id] = game.add.sprite(x, y, 'player');
+	} else {
+	  Game.playerMap[id] = game.add.sprite(x, y, 'catcher');
+	}
   Game.playerMap[id].anchor.x = 0.5;
   Game.playerMap[id].anchor.y = 0.5;
 	console.log("Added new player with id: " + id);
@@ -59,14 +64,33 @@ Game.addNewPlayer = function(id, x, y, size) {
   }
 };
 
-/*Game.movePlayer = function(id,x,y){
-    var player = Game.playerMap[id];
-    var distance = Phaser.Math.distance(player.x,player.y,x,y);
-    var tween = game.add.tween(player);
-    var duration = distance*10;
-    tween.to({x:x,y:y}, duration);
-    tween.start();
-};*/
+// changes the catcher
+Game.changeCatcher = function (newCatcher) {
+	Game.getAllPlayers().forEach(function (player) {
+		console.log('looping through changed catcher: ' + newCatcher.id + ', ' + player.id);
+		if (newCatcher.id == player.id) {
+			// set catcher sprite
+			player.loadTexture('catcher');
+			player.isCatcher = true;
+			console.log('loaded texture of new catcher')
+		} else if (player.isCatcher) {
+			// set "normal" player sprite
+			player.loadTexture('player');
+			player.isCatcher = false;
+		}
+	});
+};
+
+Game.getAllPlayers = function () {
+    var players = [];
+    Object.keys(Game.playerMap).forEach(function(key){
+			var player = Game.playerMap[key];
+			player.id = key;
+      if(player) players.push(player);
+    });
+    return players;
+}
+
 
 // move players to given target positions
 Game.movePlayers = function (positions) {
@@ -77,7 +101,7 @@ Game.movePlayers = function (positions) {
 		tween.to({x: position.x, y: position.y}, duration);
 		tween.start();
 	});
-}
+};
 
 Game.removePlayer = function(id){
     Game.playerMap[id].destroy();
